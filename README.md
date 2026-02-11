@@ -93,6 +93,9 @@ Initially run:
 Omit `--build` if the Docker images do not need to get build.
 Right now Docker + poetry is not able to cache the installs so building the image all the time is uncool.
 
+If you are on Apple Silicon (arm64), using `--build` on the first run is strongly recommended.
+Otherwise Docker may pull amd64 images and run them via emulation, which is slower and can make jobs appear stuck.
+
 ## Contributing
 
 If you have a **question**, found a **bug** or want to propose a new **feature**, have a look at the [issues page](https://github.com/pd3f/pd3f/issues).

@@ -24,11 +24,28 @@ response = requests.post(
 )
 id = response.json()["id"]
 
-while True:
+deadline = time.time() + 60 * 30  # 30 minutes
+
+while time.time() < deadline:
     r = requests.get(f"http://localhost:1616/update/{id}")
     j = r.json()
+
+    if j.get("failed"):
+        log = j.get("log", "")
+        raise RuntimeError(f"pd3f job failed:\n{log}")
+
     if "text" in j:
         break
-    print("waiting...")
+
+    if "position" in j:
+        print(f"queued (position={j['position']})...")
+    elif j.get("running"):
+        print("running...")
+    else:
+        print("waiting...")
     time.sleep(1)
+
+if "text" not in j:
+    raise TimeoutError(f"pd3f job did not finish in time (job id: {id})")
+
 print(j["text"])
