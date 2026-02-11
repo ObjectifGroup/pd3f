@@ -84,6 +84,9 @@ Here some things that will get improved.
 
 Install and use [poetry](https://python-poetry.org/).
 
+Supported Python versions: `3.9` to `3.14`.
+If you change dependencies, regenerate the lock file with `poetry lock`.
+
 Initially run:
 
 ```bash
