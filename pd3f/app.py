@@ -27,8 +27,14 @@ else:
     JOB_TIMEOUT = int(JOB_TIMEOUT)
 
 if "SENTRY_URL" in os.environ:
-    import sentry_sdk
-    from sentry_sdk.integrations.flask import FlaskIntegration
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.flask import FlaskIntegration
+    except ModuleNotFoundError as e:
+        raise RuntimeError(
+            "SENTRY_URL is set but sentry-sdk is not installed. "
+            "Install optional dependencies with: poetry install -E sentry"
+        ) from e
 
     sentry_sdk.init(dsn=os.environ["SENTRY_URL"], integrations=[FlaskIntegration()])
 

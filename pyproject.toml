@@ -16,13 +16,16 @@ python = "~3.8"
 redis = "^3.5.3"
 rq = "1.5.2"
 rq-scheduler = "^0.11.0"
-sentry-sdk = {version = "^1.0.0", extras = ["flask"]}
+sentry-sdk = {version = "^1.0.0", extras = ["flask"], optional = true}
 shortuuid = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "*", allow-prereleases = true, python = ">=3.6"}
 pylint = "*"
 pytest = "*"
+
+[tool.poetry.extras]
+sentry = ["sentry-sdk"]
 
 [build-system]
 build-backend = "poetry.masonry.api"
