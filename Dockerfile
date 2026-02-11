@@ -1,9 +1,9 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --no-cache-dir "poetry>=1.8,<2.0"
 
-COPY ./pyproject.toml ./pd3f /app/
+COPY ./poetry.lock ./pyproject.toml ./pd3f /app/
 
 RUN mkdir /uploads
 

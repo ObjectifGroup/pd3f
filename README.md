@@ -84,8 +84,30 @@ Here some things that will get improved.
 
 Install and use [poetry](https://python-poetry.org/).
 
-Supported Python versions: `3.9` to `3.14`.
-If you change dependencies, regenerate the lock file with `poetry lock`.
+Primary supported Python version: `3.14`.
+Best-effort compatibility targets: `3.12`, `3.13`.
+
+### Private package source (forked `pd3f`)
+
+This service expects `pd3f` to be installed from your private package index.
+Update `[[tool.poetry.source]]` in `pyproject.toml` with the real index URL before locking/installing.
+
+### Lock workflow
+
+If you change dependencies:
+
+```bash
+poetry env use 3.14
+poetry lock --regenerate
+poetry install
+```
+
+For best-effort compatibility checks:
+
+```bash
+poetry env use 3.12 && poetry lock --regenerate
+poetry env use 3.13 && poetry lock --regenerate
+```
 
 Initially run:
 
@@ -104,6 +126,20 @@ Sentry support is optional. If you want to use `SENTRY_URL`, install extras with
 ```bash
 poetry install -E sentry
 ```
+
+## Python 3.14 migration note
+
+The 3.14 migration uses a modernized fork of `pd3f` that removes the old
+`parsr-client -> pandas<2` dependency path in favor of an internal Parsr HTTP adapter.
+This service keeps the same public API while consuming the fork via private package source.
+Detailed checklist: `docs/py314-migration.md`.
+
+## Rollout and fallback
+
+- Release the forked `pd3f` package first.
+- Then update/release this service image.
+- Keep the previous Docker image tag and previous lockfile commit for rollback.
+- Monitor job failure rate (`/update/<id>` with `failed`) and parser/OCR runtime.
 
 ## Contributing
 
