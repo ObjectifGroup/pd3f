@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        />
+        <meta http-equiv="X-UA-Compatible" content="chrome=1, IE=edge" />
+        <title>pd3f jobs</title>
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+        <script defer src="/static/js/jquery-3.5.1.slim.min.js"></script>
+        <script defer src="/static/js/bootstrap.bundle.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="/">pd3f</a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="/">upload pdf</a>
+                        <a class="nav-link active" href="/list/"
+                            >list jobs
+                            <span class="sr-only">(current)</span></a
+                        >
+                        <a class="nav-link" href="//pd3f.com">information</a>
+                    </div>
+                </div>
+            </nav>
+
+            <h1 class="my-5">job list</h1>
+
+            {% if jobs|length == 0 %}
+            <p>No jobs are currently available.</p>
+            {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>job id</th>
+                        <th>state</th>
+                        <th>file</th>
+                        <th>result page</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs %}
+                    <tr>
+                        <td><code>{{job.id}}</code></td>
+                        <td>
+                            {% if job.state == "finished" %}
+                            <span class="badge badge-success">{{job.state}}</span>
+                            {% elif job.state == "failed" %}
+                            <span class="badge badge-danger">{{job.state}}</span>
+                            {% elif job.state == "running" %}
+                            <span class="badge badge-info">{{job.state}}</span>
+                            {% else %}
+                            <span class="badge badge-secondary">{{job.state}}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if job.filename %}
+                            {{job.filename[22:]}}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        <td><a href="/result/{{job.id}}">open</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </body>
+</html>

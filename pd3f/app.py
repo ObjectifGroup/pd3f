@@ -67,6 +67,57 @@ def index_get():
     )
 
 
+@app.route("/list/", methods=["GET"])
+def list_jobs():
+    # Gather IDs from queue and registries, then enrich each entry with current state.
+    queue_ids = list(q.job_ids)
+    started_ids = q.started_job_registry.get_job_ids()
+    finished_ids = q.finished_job_registry.get_job_ids()
+    failed_ids = q.failed_job_registry.get_job_ids()
+    deferred_ids = q.deferred_job_registry.get_job_ids()
+    scheduled_ids = q.scheduled_job_registry.get_job_ids()
+
+    all_ids = set()
+    all_ids.update(queue_ids)
+    all_ids.update(started_ids)
+    all_ids.update(finished_ids)
+    all_ids.update(failed_ids)
+    all_ids.update(deferred_ids)
+    all_ids.update(scheduled_ids)
+
+    jobs = []
+    for job_id in sorted(all_ids):
+        j = q.fetch_job(job_id)
+        filename = None
+        if j is not None:
+            filename = j.kwargs.get("filename")
+
+        if job_id in failed_ids:
+            state = "failed"
+        elif job_id in finished_ids:
+            state = "finished"
+        elif job_id in started_ids:
+            state = "running"
+        elif job_id in queue_ids:
+            state = "queued"
+        elif job_id in deferred_ids:
+            state = "deferred"
+        elif job_id in scheduled_ids:
+            state = "scheduled"
+        else:
+            state = "unknown"
+
+        jobs.append(
+            {
+                "id": job_id,
+                "state": state,
+                "filename": filename,
+            }
+        )
+
+    return render_template("list.html", jobs=jobs)
+
+
 @app.route("/", methods=["POST"])
 def index_post():
     # check if the post request has the file part
